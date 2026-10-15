@@ -103,16 +103,16 @@ const EditBlog = () => {
         
         // 🖼️ SET IMAGE PREVIEWS
         // Use backend's imageUrl directly
-// ✅ Use the VITE_API_FILE_URL from your .env
+// Blog images are R2 keys; prefix with the public bucket URL
 if (blog.image) {
-  const imageUrl = `${import.meta.env.VITE_API_FILE_URL}/uploads/${blog.image}`;
+  const imageUrl = `${import.meta.env.VITE_R2_PUBLIC_URL}/${blog.image}`;
   console.log('✅ Setting FULL image URL:', imageUrl);
   setImagePreview(imageUrl);
 }
 
 // ✅ Same for OG image
 if (blog.ogImage) {
-  const ogImageUrl = `${import.meta.env.VITE_API_FILE_URL}/uploads/${blog.ogImage}`;
+  const ogImageUrl = `${import.meta.env.VITE_R2_PUBLIC_URL}/${blog.ogImage}`;
   console.log('✅ Setting OG image URL:', ogImageUrl);
   setOgImagePreview(ogImageUrl);
 }
@@ -170,7 +170,7 @@ const handleRemoveNewImage = () => {
   console.log('🗑️ Removing new image, reverting to:', currentImage);
   setImageFile(null);
   if (currentImage) {
-    const imageUrl = `${import.meta.env.VITE_API_FILE_URL}/uploads/${currentImage}`;
+    const imageUrl = `${import.meta.env.VITE_R2_PUBLIC_URL}/${currentImage}`;
     console.log('🔄 Reverting to:', imageUrl);
     setImagePreview(imageUrl);
   } else {
@@ -183,7 +183,7 @@ const handleRemoveNewOgImage = () => {
   console.log('🗑️ Removing new OG image, reverting to:', currentOgImage);
   setOgImageFile(null);
   if (currentOgImage) {
-    const ogImageUrl = `${import.meta.env.VITE_API_FILE_URL}/uploads/${currentOgImage}`;
+    const ogImageUrl = `${import.meta.env.VITE_R2_PUBLIC_URL}/${currentOgImage}`;
     console.log('🔄 Reverting OG to:', ogImageUrl);
     setOgImagePreview(ogImageUrl);
   } else {

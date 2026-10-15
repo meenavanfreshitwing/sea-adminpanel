@@ -81,12 +81,12 @@ const CreateBlog = () => {
       
       // Set image preview if exists
       if (blog.image) {
-        setImagePreview(`http://localhost:5000/uploads/${blog.image}`);
+        setImagePreview(`${import.meta.env.VITE_R2_PUBLIC_URL}/${blog.image}`);
       }
       
       // Set OG image preview if exists and different from main image
       if (blog.ogImage && blog.ogImage !== blog.image) {
-        setOgImagePreview(`http://localhost:5000/uploads/${blog.ogImage}`);
+        setOgImagePreview(`${import.meta.env.VITE_R2_PUBLIC_URL}/${blog.ogImage}`);
       }
     } catch (err) {
       setError('Failed to load blog data');

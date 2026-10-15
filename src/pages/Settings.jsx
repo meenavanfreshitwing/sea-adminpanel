@@ -46,6 +46,8 @@ const Settings = () => {
     contactNumber: '',
     contactEmail: '',
     companyAddress: '',
+    whatsappNumber: '',
+    fssaiNumber: '',
     facebookUrl: '',
     twitterUrl: '',
     instagramUrl: '',
@@ -234,15 +236,20 @@ const Settings = () => {
         maintenanceMode: settings.maintenanceMode,
         
         // Payment settings
-        razorpayEnabled: settings.razorpayEnabled,
-        razorpayKeyId: settings.razorpayKeyId,
-        razorpayKeySecret: settings.razorpayKeySecret,
+        // Keys from the server .env are not stored here, so don't overwrite the saved ones
+        ...(!settings.razorpayFromEnv && {
+          razorpayEnabled: settings.razorpayEnabled,
+          razorpayKeyId: settings.razorpayKeyId,
+          razorpayKeySecret: settings.razorpayKeySecret,
+        }),
         cashOnDeliveryEnabled: settings.cashOnDeliveryEnabled,
         
         // Contact info
         contactNumber: settings.contactNumber,
         contactEmail: settings.contactEmail,
         companyAddress: settings.companyAddress,
+        whatsappNumber: settings.whatsappNumber,
+        fssaiNumber: settings.fssaiNumber,
         
         // Social media (individual fields - backend will map them)
         facebookUrl: settings.facebookUrl,
@@ -571,6 +578,11 @@ const Settings = () => {
                               <p className="text-xs text-gray-500">Online payment gateway</p>
                             </div>
                           </div>
+                          {settings.razorpayFromEnv ? (
+                            <span className={`text-xs font-semibold px-2 py-1 rounded ${settings.razorpayEnabled ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'}`}>
+                              {settings.razorpayEnabled ? 'ON' : 'OFF'}
+                            </span>
+                          ) : (
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
                               type="checkbox"
@@ -581,9 +593,28 @@ const Settings = () => {
                             />
                             <div className="w-10 h-5 sm:w-11 sm:h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all peer-checked:bg-[#ff0000]"></div>
                           </label>
+                          )}
                         </div>
-                        
-                        {settings.razorpayEnabled && (
+
+                        {settings.razorpayFromEnv && (
+                          <div className="bg-white p-3 rounded border border-gray-200 text-xs text-gray-700 space-y-1">
+                            <p>
+                              Razorpay keys are set in the server <span className="font-mono">.env</span> file
+                              (<span className="font-mono">RAZORPAY_KEY_ID</span>, <span className="font-mono">RAZORPAY_KEY_SECRET</span>).
+                            </p>
+                            <p>
+                              Key ID: <span className="font-mono">{settings.razorpayKeyId}</span>
+                              {settings.razorpayKeyId?.startsWith('rzp_test_') && (
+                                <span className="ml-2 font-semibold text-amber-700">(TEST mode – no real money)</span>
+                              )}
+                            </p>
+                            <p className="text-gray-500">
+                              To change the keys or switch online payment off (<span className="font-mono">RAZORPAY_ENABLED=false</span>), edit the server .env and restart the API.
+                            </p>
+                          </div>
+                        )}
+
+                        {settings.razorpayEnabled && !settings.razorpayFromEnv && (
                           <div className="space-y-3">
                             <div className="bg-white p-3 rounded border border-gray-200">
                               <div className="flex justify-between items-start">
@@ -729,6 +760,35 @@ const Settings = () => {
                               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff0000] focus:border-[#ff0000]"
                               placeholder="123 Street, City, Country"
                             />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              <Phone size={14} className="inline mr-1" />
+                              WhatsApp Number
+                            </label>
+                            <input
+                              type="tel"
+                              name="whatsappNumber"
+                              value={settings.whatsappNumber || ''}
+                              onChange={handleInputChange}
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff0000] focus:border-[#ff0000]"
+                              placeholder="+91 98765 43210"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Shows a "Chat on WhatsApp" button on the website. Leave empty to hide it.</p>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              FSSAI Licence Number
+                            </label>
+                            <input
+                              type="text"
+                              name="fssaiNumber"
+                              value={settings.fssaiNumber || ''}
+                              onChange={handleInputChange}
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff0000] focus:border-[#ff0000]"
+                              placeholder="14-digit FSSAI number"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Shown in the website footer to build customer trust.</p>
                           </div>
                         </div>
                       </div>

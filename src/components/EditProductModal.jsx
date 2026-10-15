@@ -1,7 +1,6 @@
 // src/components/EditProductModal.jsx - VARIANT ONLY VERSION (No Simple Product, No SEO)
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { categoriesAPI } from '../api/categories';
-import { productsAPI } from '../api/products';
 import { 
   X, Upload, Plus, Trash2, Tag, Package, DollarSign, 
   FileText, Settings, Image, ChevronDown, ChevronUp, 
@@ -15,7 +14,7 @@ const generateSlug = (text) => {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, '-')                    // spaces → dashes
-    .replace(/[^\p{L}\p{N}\p{M}\-]+/gu, '')  // keep letters + numbers + marks + dashes
+    .replace(/[^\p{L}\p{N}\p{M}-]+/gu, '')  // keep letters + numbers + marks + dashes
     .replace(/-+/g, '-')                     // collapse multiple dashes
     .replace(/^-+/, '')                      // trim leading dash
     .replace(/-+$/, '');                     // trim trailing dash
@@ -158,6 +157,7 @@ const EditProductModal = ({ isOpen, onClose, onEditProduct, product }) => {
     // Variants
     if (product.variants && product.variants.length > 0) {
       setVariants(product.variants.map(variant => ({
+        _id: variant._id, // keep the pack id so carts and past orders still match after saving
         variantName: variant.variantName || '',
         price: variant.price || '',
         description: variant.description || '',
@@ -529,6 +529,7 @@ const EditProductModal = ({ isOpen, onClose, onEditProduct, product }) => {
 
       // Variants data
       const variantsForJson = variants.map(variant => ({
+        ...(variant._id ? { _id: variant._id } : {}),
         variantName: variant.variantName.trim(),
         price: parseFloat(variant.price),
         description: variant.description?.trim() || '',

@@ -22,7 +22,10 @@ import {
   Shield,
   Truck,
   Ship,
-  RotateCcw
+  RotateCcw,
+  CalendarDays,
+  Scale,
+  Star
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -67,6 +70,21 @@ const Sidebar = () => {
       path: '/orders',
       label: 'Orders',
       icon: ClipboardList
+    },
+    {
+      path: '/booking-calendar',
+      label: 'Booking Calendar',
+      icon: CalendarDays
+    },
+    {
+      path: '/delivery-summary',
+      label: 'Delivery Summary',
+      icon: Scale
+    },
+    {
+      path: '/reviews',
+      label: 'Reviews',
+      icon: Star
     },
     {
       path: '/customers',

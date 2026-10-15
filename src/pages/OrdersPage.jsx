@@ -638,6 +638,13 @@ const OrdersPage = () => {
                 #{order.orderId || order._id?.slice(-8)}
               </p>
               <p className="text-[10px] sm:text-[11px] text-gray-500 truncate">{formatDate(order.createdAt)}</p>
+              {order.deliveryDate && (
+                <p className={`text-[10px] sm:text-[11px] font-semibold truncate ${order.bookingReview?.required ? 'text-amber-700' : 'text-green-700'}`}>
+                  🚚 Deliver: {new Date(`${order.deliveryDate}T00:00:00Z`).toLocaleDateString('en-IN', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' })}
+                  {order.deliverySlot?.label ? ` · ${order.deliverySlot.label}` : ''}
+                  {order.bookingReview?.required ? ' · needs review' : ''}
+                </p>
+              )}
             </div>
           </div>
 

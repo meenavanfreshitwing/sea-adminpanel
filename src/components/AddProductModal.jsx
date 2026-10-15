@@ -1,7 +1,6 @@
 // src/components/AddProductModal.jsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { categoriesAPI } from '../api/categories';
-import { productsAPI } from '../api/products';
 import { 
   X, Upload, Plus, Trash2, Tag, Package, DollarSign, 
   FileText, Settings, Image, ChevronDown, ChevronUp, 
@@ -15,7 +14,7 @@ const generateSlug = (text) => {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, '-')                // spaces → dashes
-.replace(/[^\p{L}\p{N}\p{M}\-]+/gu, '')
+.replace(/[^\p{L}\p{N}\p{M}-]+/gu, '')
     .replace(/-+/g, '-')                 // collapse multiple dashes
     .replace(/^-+/, '')                  // trim leading dash
     .replace(/-+$/, '');                 // trim trailing dash

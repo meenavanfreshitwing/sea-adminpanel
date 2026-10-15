@@ -1,183 +1,82 @@
-// App.jsx (or your main routing component)
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Products from './pages/Products';
-import Categories from './pages/Categories';
-import OrdersPage from './pages/OrdersPage';
-import CustomerPage from './pages/CustomerPage';
-import Settings from './pages/Settings';
-import TermsManagement from './pages/TermsManagement';
-import DeliveryBoyStats from './pages/DeliveryBoyStats';
-import PrivacyManagement from './pages/PrivacyManagement';
-import DeliveryBoys from './pages/DeliveryBoys';
-import Shipping from './pages/Shipping';   // ✅ ADD THIS
-import Returns from './pages/Returns';     // ✅ ADD THIS
 
-// Import Blog pages
-import Blogs from './pages/Blogs';
-import CreateBlog from './pages/CreateBlog';
-import EditBlog from './pages/EditBlog';
+// Pages are loaded on demand so the first load only ships the login screen
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Products = lazy(() => import('./pages/Products'));
+const Categories = lazy(() => import('./pages/Categories'));
+const OrdersPage = lazy(() => import('./pages/OrdersPage'));
+const CustomerPage = lazy(() => import('./pages/CustomerPage'));
+const Settings = lazy(() => import('./pages/Settings'));
+const TermsManagement = lazy(() => import('./pages/TermsManagement'));
+const PrivacyManagement = lazy(() => import('./pages/PrivacyManagement'));
+const DeliveryBoys = lazy(() => import('./pages/DeliveryBoys'));
+const DeliveryBoyStats = lazy(() => import('./pages/DeliveryBoyStats'));
+const Shipping = lazy(() => import('./pages/Shipping'));
+const Returns = lazy(() => import('./pages/Returns'));
+const Blogs = lazy(() => import('./pages/Blogs'));
+const CreateBlog = lazy(() => import('./pages/CreateBlog'));
+const EditBlog = lazy(() => import('./pages/EditBlog'));
+const BookingCalendar = lazy(() => import('./pages/BookingCalendar'));
+const DeliverySummary = lazy(() => import('./pages/DeliverySummary'));
+const Reviews = lazy(() => import('./pages/Reviews'));
+
+// All admin-only pages
+const adminRoutes = [
+  { path: '/dashboard', Page: Dashboard },
+  { path: '/blogs', Page: Blogs },
+  { path: '/blogs/create', Page: CreateBlog },
+  { path: '/blogs/edit/:id', Page: EditBlog },
+  { path: '/delivery-boys/:id/stats', Page: DeliveryBoyStats },
+  { path: '/categories', Page: Categories },
+  { path: '/products', Page: Products },
+  { path: '/orders', Page: OrdersPage },
+  { path: '/booking-calendar', Page: BookingCalendar },
+  { path: '/delivery-summary', Page: DeliverySummary },
+  { path: '/reviews', Page: Reviews },
+  { path: '/customers', Page: CustomerPage },
+  { path: '/delivery-boys', Page: DeliveryBoys },
+  { path: '/terms', Page: TermsManagement },
+  { path: '/privacy', Page: PrivacyManagement },
+  { path: '/shipping', Page: Shipping },
+  { path: '/returns', Page: Returns },
+  { path: '/settings', Page: Settings },
+];
+
+const PageLoader = () => (
+  <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
+  </div>
+);
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <div className="App">
-          <Routes>
-            <Route path="/login" element={<Login />} />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
 
-            {/* Dashboard */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
+              {adminRoutes.map(({ path, Page }) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    <ProtectedRoute adminOnly={true}>
+                      <Page />
+                    </ProtectedRoute>
+                  }
+                />
+              ))}
 
-            {/* Blog Routes */}
-            <Route
-              path="/blogs"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <Blogs />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/blogs/create"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <CreateBlog />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/blogs/edit/:id"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <EditBlog />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/delivery-boys/:id/stats"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <DeliveryBoyStats />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Categories */}
-            <Route
-              path="/categories"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <Categories />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Products */}
-            <Route
-              path="/products"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <Products />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Orders */}
-            <Route
-              path="/orders"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <OrdersPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Customers */}
-            <Route
-              path="/customers"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <CustomerPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Delivery Boys */}
-            <Route
-              path="/delivery-boys"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <DeliveryBoys />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Terms Management */}
-            <Route
-              path="/terms"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <TermsManagement />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Privacy Management */}
-            <Route
-              path="/privacy"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <PrivacyManagement />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* ✅ Shipping Management */}
-            <Route
-              path="/shipping"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <Shipping />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* ✅ Returns Management */}
-            <Route
-              path="/returns"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <Returns />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Settings */}
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute adminOnly={true}>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </Suspense>
         </div>
       </Router>
     </AuthProvider>

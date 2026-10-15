@@ -152,7 +152,7 @@ const Blogs = () => {
                             {blog.image && (
                               <img
                                 className="h-12 w-12 rounded-lg object-cover"
-                                src={`${import.meta.env.VITE_API_FILE_URL || 'http://localhost:5002'}/uploads/${blog.image}`}
+                                src={`${import.meta.env.VITE_R2_PUBLIC_URL}/${blog.image}`}
                                 alt={blog.imageAlt || blog.title}
                                 onError={(e) => {
                                   console.error('❌ Image failed:', blog.image);
