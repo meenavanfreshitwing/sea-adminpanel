@@ -43,6 +43,8 @@ const Settings = () => {
     siteName: '',
     siteTitle: '',
     siteDescription: '',
+    announcement: '',
+    announcementEnabled: false,
     contactNumber: '',
     contactEmail: '',
     companyAddress: '',
@@ -233,6 +235,8 @@ const Settings = () => {
         siteName: settings.siteName,
         siteTitle: settings.siteTitle,
         siteDescription: settings.siteDescription,
+        announcement: settings.announcement,
+        announcementEnabled: settings.announcementEnabled,
         maintenanceMode: settings.maintenanceMode,
         
         // Payment settings
@@ -536,6 +540,35 @@ const Settings = () => {
                             />
                           </div>
                         </div>
+                      </div>
+
+                      <div className="border-t pt-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <h3 className="text-sm sm:text-base font-semibold text-gray-900">Announcement</h3>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Shown at the top of the website and app when switched on. Each new line shows as its own line.
+                            </p>
+                          </div>
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              name="announcementEnabled"
+                              checked={settings.announcementEnabled}
+                              onChange={handleInputChange}
+                              className="sr-only peer"
+                            />
+                            <div className="w-10 h-5 sm:w-11 sm:h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 sm:after:h-5 sm:after:w-5 after:transition-all peer-checked:bg-[#ff0000]"></div>
+                          </label>
+                        </div>
+                        <textarea
+                          name="announcement"
+                          value={settings.announcement}
+                          onChange={handleInputChange}
+                          rows="4"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff0000] focus:border-[#ff0000]"
+                          placeholder={"Delivery within 10 km of Karaikudi, Pudukkottai & Trichy city centres only.\n📅 Wed, Sat & Sun | 📌 Book 2 days in advance."}
+                        />
                       </div>
 
                       <div className="border-t pt-4">
