@@ -25,7 +25,10 @@ import {
   RotateCcw,
   CalendarDays,
   Scale,
-  Star
+  Star,
+  MapPin,
+  IndianRupee,
+  CookingPot
 } from 'lucide-react';
 
 import { useAuth } from '../contexts/AuthContext';
@@ -65,6 +68,21 @@ const Sidebar = () => {
       path: '/products',
       label: 'Products',
       icon: Package
+    },
+    {
+      path: '/addons',
+      label: 'Add-ons',
+      icon: CookingPot
+    },
+    {
+      path: '/locations',
+      label: 'Locations',
+      icon: MapPin
+    },
+    {
+      path: '/location-prices',
+      label: 'Location Prices',
+      icon: IndianRupee
     },
     {
       path: '/orders',

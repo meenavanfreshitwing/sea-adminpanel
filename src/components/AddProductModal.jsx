@@ -1,7 +1,9 @@
 // src/components/AddProductModal.jsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { categoriesAPI } from '../api/categories';
-import { 
+import { toApiLocationPrices } from '../api/locations';
+import LocationPriceEditor from './LocationPriceEditor';
+import {
   X, Upload, Plus, Trash2, Tag, Package, DollarSign, 
   FileText, Settings, Image, ChevronDown, ChevronUp, 
   Save, AlertCircle, Layers, Info 
@@ -210,7 +212,8 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
       images: [],
       sku: '',
       isDefault: variants.length === 0,
-      features: []
+      features: [],
+      locationPrices: []
     };
     
     setVariants([...variants, newVariant]);
@@ -456,7 +459,8 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
         stock: parseInt(variant.stock),
         sku: variant.sku?.trim() || '',
         isDefault: variant.isDefault || false,
-        features: variant.features || []
+        features: variant.features || [],
+        locationPrices: toApiLocationPrices(variant.locationPrices)
       }));
       
       submitData.append('variants', JSON.stringify(variantsForJson));
@@ -816,7 +820,13 @@ const AddProductModal = ({ isOpen, onClose, onAddProduct }) => {
                         />
                         <span className="text-[11px] sm:text-xs text-gray-600">Set as default variant</span>
                       </div>
-                      
+
+                      <LocationPriceEditor
+                        value={variant.locationPrices || []}
+                        defaultPrice={variant.price}
+                        onChange={(rows) => handleVariantChange(index, 'locationPrices', rows)}
+                      />
+
                       <div className="md:col-span-2">
                         <label className="block text-[11px] sm:text-xs font-medium text-gray-500 mb-1">Variant Images *</label>
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-2.5 sm:p-3 hover:border-[#ff0000] transition-colors">

@@ -48,6 +48,7 @@ const OrdersPage = () => {
   const [sortOption, setSortOption] = useState('newest');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedLocation, setSelectedLocation] = useState('all');
 
   const statusOptions = [
     { value: 'all', label: 'All Status', icon: '📋' },
@@ -92,6 +93,7 @@ const OrdersPage = () => {
 
     let result = [...orders];
     if (selectedStatus !== 'all') result = result.filter(o => o.orderStatus === selectedStatus);
+    if (selectedLocation !== 'all') result = result.filter(o => (o.locationName || '') === selectedLocation);
 
     if (searchTerm.trim() !== '') {
       const term = searchTerm.trim().toLowerCase();
@@ -100,7 +102,9 @@ const OrdersPage = () => {
         const cityText = (order.shippingAddress?.city || '').toLowerCase();
         const areaText = (order.typedArea || '').toLowerCase();
         const wardText = (order.wardName || '').toLowerCase();
+        const locationText = (order.locationName || '').toLowerCase();
         return (
+          locationText.includes(term) ||
           (order.orderId && order.orderId.toLowerCase().includes(term)) ||
           (customer.name && customer.name.toLowerCase().includes(term)) ||
           (customer.email && customer.email.toLowerCase().includes(term)) ||
@@ -124,7 +128,10 @@ const OrdersPage = () => {
     });
 
     setFilteredOrders(result);
-  }, [orders, sortOption, selectedStatus, searchTerm]);
+  }, [orders, sortOption, selectedStatus, selectedLocation, searchTerm]);
+
+  // Locations that appear in the loaded orders (orders before location pricing have none)
+  const orderLocations = [...new Set(orders.map(o => o.locationName).filter(Boolean))].sort();
 
   const fetchOrders = async (showRefreshingState = false) => {
     try {
@@ -581,7 +588,9 @@ const OrdersPage = () => {
     });
 
     const more = limit && products.length > limit ? ` +${products.length - limit} more` : '';
-    return parts.join(', ') + more;
+    const addonCount = (order.addons || []).reduce((sum, a) => sum + (a.quantity || 0), 0);
+    const addons = addonCount ? ` · 🍳 ${addonCount} add-on${addonCount === 1 ? '' : 's'}` : '';
+    return parts.join(', ') + more + addons;
   };
 
   const totalOrders = orders.length;
@@ -700,6 +709,11 @@ const OrdersPage = () => {
               <div className="flex items-start gap-1.5 text-[11px] sm:text-xs text-gray-600 mb-1.5">
                 <FaMapMarkerAlt className="text-gray-400 flex-shrink-0 mt-0.5" size={11} />
                 <span className="break-words min-w-0">
+                  {order.locationName && (
+                    <span className="mr-1.5 inline-block rounded bg-red-50 px-1.5 py-px text-[10px] font-semibold text-[#cc0000] border border-red-100">
+                      {order.locationName}
+                    </span>
+                  )}
                   {order.wardName ? `Ward ${order.wardId} — ${order.wardName}` : order.typedArea || order.shippingAddress?.city}
                 </span>
               </div>
@@ -776,6 +790,7 @@ const OrdersPage = () => {
                 <div className="flex items-start gap-2">
                   <FaMapMarkerAlt className="text-gray-400 mt-0.5 flex-shrink-0" size={12} />
                   <div className="min-w-0 text-[11px] text-gray-600 space-y-0.5">
+                    {order.locationName && <p className="font-semibold text-[#cc0000] break-words">📍 {order.locationName} prices</p>}
                     {order.wardName && <p className="text-blue-700 font-medium break-words">Ward {order.wardId} — {order.wardName}</p>}
                     {order.typedArea && <p className="text-orange-700 break-words">🏠 {order.typedArea}</p>}
                     {order.shippingAddress?.street && <p className="break-words">📍 {order.shippingAddress.street}</p>}
@@ -1191,7 +1206,11 @@ const OrdersPage = () => {
       receiptData.customer?.alternatePhone ||
       '';
 
-    const items = receiptData.products || receiptData.items || [];
+    // Fish first, then add-ons (masala etc.). A receipt from the API already includes add-ons.
+    const addonItems = (receiptData.addons || []).map(a => ({
+      name: `${a.name} (add-on)`, variantName: a.categoryName, price: a.price, quantity: a.quantity
+    }));
+    const items = receiptData.products ? [...receiptData.products, ...addonItems] : (receiptData.items || []);
     const subtotal = receiptData.pricing?.subtotal || receiptData.totalAmount || 0;
     const shipping = receiptData.pricing?.shipping || receiptData.shippingFee || 0;
     const tax = receiptData.pricing?.tax || receiptData.taxAmount || 0;
@@ -1486,7 +1505,7 @@ const OrdersPage = () => {
           </div>
 
           <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-200 mb-4">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+            <div className={`grid grid-cols-1 gap-2 sm:gap-3 ${orderLocations.length ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-3'}`}>
               <div className="relative sm:col-span-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
                 <input
@@ -1504,6 +1523,16 @@ const OrdersPage = () => {
               >
                 {statusOptions.map(o => <option key={o.value} value={o.value}>{o.icon} {o.label}</option>)}
               </select>
+              {orderLocations.length > 0 && (
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-[#ff0000] focus:border-transparent"
+                >
+                  <option value="all">📍 All Locations</option>
+                  {orderLocations.map(name => <option key={name} value={name}>📍 {name}</option>)}
+                </select>
+              )}
               <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value)}

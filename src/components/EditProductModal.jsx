@@ -1,7 +1,9 @@
 // src/components/EditProductModal.jsx - VARIANT ONLY VERSION (No Simple Product, No SEO)
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { categoriesAPI } from '../api/categories';
-import { 
+import { toApiLocationPrices, toFormLocationPrices } from '../api/locations';
+import LocationPriceEditor from './LocationPriceEditor';
+import {
   X, Upload, Plus, Trash2, Tag, Package, DollarSign, 
   FileText, Settings, Image, ChevronDown, ChevronUp, 
   Save, AlertCircle, Layers, Info 
@@ -167,7 +169,8 @@ const EditProductModal = ({ isOpen, onClose, onEditProduct, product }) => {
         images: variant.images || [],
         sku: variant.sku || '',
         isDefault: variant.isDefault || false,
-        features: variant.features || []
+        features: variant.features || [],
+        locationPrices: toFormLocationPrices(variant.locationPrices)
       })));
     } else {
       setVariants([]);
@@ -259,7 +262,8 @@ const EditProductModal = ({ isOpen, onClose, onEditProduct, product }) => {
       images: [],
       sku: '',
       isDefault: variants.length === 0,
-      features: []
+      features: [],
+      locationPrices: []
     };
     
     setVariants([...variants, newVariant]);
@@ -539,9 +543,10 @@ const EditProductModal = ({ isOpen, onClose, onEditProduct, product }) => {
         images: variant.images || [],
         sku: variant.sku?.trim() || '',
         isDefault: variant.isDefault || false,
-        features: variant.features || []
+        features: variant.features || [],
+        locationPrices: toApiLocationPrices(variant.locationPrices)
       }));
-      
+
       submitData.append('variants', JSON.stringify(variantsForJson));
 
       // Specifications
@@ -904,7 +909,13 @@ const EditProductModal = ({ isOpen, onClose, onEditProduct, product }) => {
                         />
                         <span className="text-[11px] sm:text-xs text-gray-600">Set as default variant</span>
                       </div>
-                      
+
+                      <LocationPriceEditor
+                        value={variant.locationPrices || []}
+                        defaultPrice={variant.price}
+                        onChange={(rows) => handleVariantChange(index, 'locationPrices', rows)}
+                      />
+
                       <div className="md:col-span-2">
                         <label className="block text-[11px] sm:text-xs font-medium text-gray-500 mb-1">Variant Images *</label>
                         

@@ -23,6 +23,9 @@ const EditBlog = lazy(() => import('./pages/EditBlog'));
 const BookingCalendar = lazy(() => import('./pages/BookingCalendar'));
 const DeliverySummary = lazy(() => import('./pages/DeliverySummary'));
 const Reviews = lazy(() => import('./pages/Reviews'));
+const Locations = lazy(() => import('./pages/Locations'));
+const LocationPrices = lazy(() => import('./pages/LocationPrices'));
+const Addons = lazy(() => import('./pages/Addons'));
 
 // All admin-only pages
 const adminRoutes = [
@@ -33,6 +36,9 @@ const adminRoutes = [
   { path: '/delivery-boys/:id/stats', Page: DeliveryBoyStats },
   { path: '/categories', Page: Categories },
   { path: '/products', Page: Products },
+  { path: '/locations', Page: Locations },
+  { path: '/location-prices', Page: LocationPrices },
+  { path: '/addons', Page: Addons },
   { path: '/orders', Page: OrdersPage },
   { path: '/booking-calendar', Page: BookingCalendar },
   { path: '/delivery-summary', Page: DeliverySummary },

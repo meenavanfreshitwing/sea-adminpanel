@@ -332,6 +332,16 @@ const DeliverySummary = () => {
                         </div>
                       </div>
                       <ProductTable products={day.products} />
+                      {day.addons?.length > 0 && (
+                        <div className="border-t px-4 py-3 text-sm">
+                          <span className="mr-2 font-medium text-gray-700">🍳 Add-ons to pack:</span>
+                          {day.addons.map(a => (
+                            <span key={a.name} className="mr-2 inline-block rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-800 ring-1 ring-amber-200">
+                              {a.name} × <b>{a.quantity}</b>
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </section>
                   ))}
                 </>
